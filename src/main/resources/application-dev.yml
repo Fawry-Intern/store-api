@@ -1,0 +1,15 @@
+server:
+  port: 3031
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8765/eureka
+custom:
+  datasource:
+    driver: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/store_db
+    username: postgres
+    password: postgres
+
+
