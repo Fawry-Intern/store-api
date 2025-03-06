@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "custom.datasource")
 @Getter
 @Setter
-public class DataSourceProperties {
+public class DatasourceProperties {
     private String driver;
     private String url;
     private String username;
