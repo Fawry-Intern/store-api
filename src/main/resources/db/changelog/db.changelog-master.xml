@@ -1,0 +1,34 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    
+    <changeSet id="create_stores_tbl" author="muhammad hussein" context="development">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="stores"/>
+            </not>
+        </preConditions>
+        <sqlFile path="db/changelog/sql/stores_v.0.0.0.sql"/>
+    </changeSet>
+
+    <changeSet id="create_stock_tbl" author="muhammad hussein" context="development">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="stock"/>
+            </not>
+        </preConditions>
+        <sqlFile path="db/changelog/sql/stock_v.0.0.1.sql"/>
+    </changeSet>
+
+    <changeSet id="create_product_consumptions_tbl" author="muhammad hussein" context="development">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="product_consumptions"/>
+            </not>
+        </preConditions>
+        <sqlFile path="db/changelog/sql/product_consumptions_v.0.0.2.sql"/>
+    </changeSet>
+
+</databaseChangeLog>
