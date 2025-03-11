@@ -2,8 +2,13 @@ package com.fawry.store_api.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Builder
@@ -32,4 +37,9 @@ public class Stock {
     @Column(name = "stock_available_quantity", nullable = false)
     @Min(value = 0, message = "Stock available quantity must be at least 0")
     private Integer stockAvailableQuantity;
+
+    @NotNull(message = "Stock last updated is mandatory")
+    @Column(name = "stock_last_updated", nullable = false)
+    @UpdateTimestamp
+    private Instant stockLastUpdated;
 }

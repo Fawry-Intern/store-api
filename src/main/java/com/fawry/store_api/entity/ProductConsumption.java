@@ -7,7 +7,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
+
 
 @Entity
 @Builder
@@ -44,5 +45,5 @@ public class ProductConsumption {
 
     @Column(name = "consumption_date", nullable = false, updatable = false)
     @CreationTimestamp
-    private LocalDateTime consumptionDate;
+    private Instant consumptionDate;
 }
