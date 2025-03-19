@@ -1,6 +1,8 @@
 package com.fawry.store_api.controller;
 
+import com.fawry.store_api.dto.ProductResponseDTO;
 import com.fawry.store_api.dto.StoreDTO;
+import com.fawry.store_api.exception.EntityNotFoundException;
 import com.fawry.store_api.service.StoreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,19 @@ public class StoreController {
     public ResponseEntity<List<StoreDTO>> getAllStores() {
         List<StoreDTO> stores = storeService.getAllStores();
         return ResponseEntity.ok(stores);
+    }
+
+
+    @GetMapping("/{storeId}/products")
+    public ResponseEntity<List<ProductResponseDTO>> getStoreProducts(@PathVariable Long storeId) {
+        try {
+            List<ProductResponseDTO> products = storeService.getStoreProducts(storeId);
+            return ResponseEntity.ok(products);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
 

@@ -6,8 +6,7 @@ import com.fawry.store_api.entity.Store;
 import com.fawry.store_api.repository.StoreRepository;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,10 +35,10 @@ public class StockMapper {
                 .orElseThrow(() -> new RuntimeException("Store not found"));
 
         return Stock.builder()
-                .id(stockDTO.getId())
                 .productId(stockDTO.getProductId())
                 .store(store)
                 .stockAvailableQuantity(stockDTO.getStockAvailableQuantity())
+                .stockLastUpdated(Instant.now())
                 .build();
     }
 

@@ -22,5 +22,7 @@ public class StoreDTO {
     @Size(min = 5, max = 255, message = "Store address must be between 5 and 255 characters")
     private String address;
 
-    //TODO retrieving products data from product-api
+    private Integer productCount;
+    private Integer totalStockItems;
+
 }
