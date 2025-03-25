@@ -1,20 +1,18 @@
 package com.fawry.store_api.dto;
 
 import lombok.Builder;
-import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
-@Data
 @Builder
-public class ErrorResponseDTO {
-    private LocalDateTime timestamp;
-    private int status;
-    private String error;
-    private String message;
-    private String path;
-
+public record ErrorResponseDTO(
+        LocalDateTime timestamp,
+        int status,
+        String error,
+        String message,
+        String path
+) {
     public static ErrorResponseDTO createErrorResponse(
             HttpStatus status,
             String message,

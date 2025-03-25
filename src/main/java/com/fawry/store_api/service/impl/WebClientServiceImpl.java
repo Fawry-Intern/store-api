@@ -1,6 +1,7 @@
-package com.fawry.store_api.service;
+package com.fawry.store_api.service.impl;
 
 import com.fawry.store_api.dto.ProductResponseDTO;
+import com.fawry.store_api.service.WebClientService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class WebClientServiceImpl implements WebClientService {
 
     private final WebClient webClient;
 
-    public WebClientServiceImpl(@Value("${product.api.base-url:http://localhost:7071}") String productApiBaseUrl) {
+    public WebClientServiceImpl(@Value("${product.api.base-url:http://localhost:6061}") String productApiBaseUrl) {
         this.webClient = WebClient.create(productApiBaseUrl);
     }
 

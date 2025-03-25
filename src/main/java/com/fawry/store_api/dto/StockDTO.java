@@ -2,30 +2,24 @@ package com.fawry.store_api.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
-@Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class StockDTO {
-    private Long id;
-
-    @NotNull(message = "Product ID is mandatory")
-    private Long productId;
-    private String productName;
-    private Double productPrice;
-    @NotNull(message = "Store ID is mandatory")
-    private Long storeId;
-
-    @NotNull(message = "Stock available quantity is mandatory")
-    @Min(value = 0, message = "Stock available quantity must be at least 0")
-    private Integer stockAvailableQuantity;
-
-    private Instant stockLastUpdated;
-}
+public record StockDTO(
+        Long id,
+        @NotNull(message = "Product ID is mandatory")
+        Long productId,
+        String productName,
+        BigDecimal productPrice,
+        String productDescription,
+        String productImage,
+        @NotNull(message = "Store ID is mandatory")
+        Long storeId,
+        @NotNull(message = "Stock available quantity is mandatory")
+        @Min(value = 0, message = "Stock available quantity must be at least 0")
+        Integer stockAvailableQuantity,
+        Instant stockLastUpdated
+) {}
