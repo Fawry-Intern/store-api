@@ -1,0 +1,2 @@
+ALTER TABLE inventory_reservation
+ADD COLUMN reserve_inventory_last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;

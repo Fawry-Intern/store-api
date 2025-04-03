@@ -31,4 +31,20 @@
         <sqlFile path="db/changelog/sql/product_consumptions_v.0.0.2.sql"/>
     </changeSet>
 
+    <changeSet id="create_inventory_reservation_tbl" author="muhammad hussein">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="inventory_reservation"/>
+            </not>
+        </preConditions>
+        <sqlFile path="db/changelog/sql/inventory_reservation_v.0.1.1.sql"/>
+    </changeSet>
+
+    <changeSet id="add_reserve_inventory_last_updated_column" author="muhammad hussein">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="inventory_reservation" columnName="reserve_inventory_last_updated"/>
+        </preConditions>
+        <sqlFile path="db/changelog/sql/reserve_inventory_last_updated_column_v.1.1.1.sql"/>
+    </changeSet>
+
 </databaseChangeLog>

@@ -1,24 +1,40 @@
 package com.fawry.store_api.service.impl;
 
+import com.fawry.kafka.dto.OrderItemDTO;
+import com.fawry.kafka.events.OrderCanceledEventDTO;
+import com.fawry.kafka.events.OrderCreatedEventDTO;
+import com.fawry.kafka.events.StoreCreatedEventDTO;
+import com.fawry.kafka.producers.StoreCancellationPublisher;
+import com.fawry.kafka.producers.StoreUpdatedPublisher;
 import com.fawry.store_api.dto.ProductResponseDTO;
 import com.fawry.store_api.dto.StoreDTO;
+import com.fawry.store_api.entity.InventoryReservation;
 import com.fawry.store_api.entity.Stock;
 import com.fawry.store_api.entity.Store;
+import com.fawry.store_api.enums.ReservationStatus;
 import com.fawry.store_api.exception.EntityAlreadyExistsException;
 import com.fawry.store_api.exception.EntityNotFoundException;
+import com.fawry.store_api.exception.InsufficientInventoryException;
 import com.fawry.store_api.mapper.StoreMapper;
+import com.fawry.store_api.repository.InventoryReservationRepository;
 import com.fawry.store_api.repository.StockRepository;
 import com.fawry.store_api.repository.StoreRepository;
 import com.fawry.store_api.service.StoreService;
 import com.fawry.store_api.service.WebClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.fawry.store_api.enums.ReservationStatus.CANCELED;
+import static com.fawry.store_api.enums.ReservationStatus.RESERVED;
 
 @Service
 @Transactional
@@ -29,6 +45,92 @@ public class StoreServiceImpl implements StoreService {
     private final StoreMapper storeMapper;
     private final StockRepository stockRepository;
     private final WebClientService webClientService;
+    private final InventoryReservationRepository inventoryReservationRepository;
+    private final StoreCancellationPublisher storeCancellationPublisher;
+    private final StoreUpdatedPublisher storeUpdatedPublisher;
+
+    @Override
+    @Transactional
+    @KafkaListener(topics = "order-events", groupId = "store_order_id", topicPartitions = {
+            @TopicPartition(topic = "order-events", partitions = {"0", "1", "2", "4"}
+            )})
+    public void reserveStore(OrderCreatedEventDTO order) {
+        Long orderId = order.getOrderId();
+        log.info("Consume order created event successfully {}", order);
+        List<OrderItemDTO> orderItems = order.getOrderItems();
+
+        List<InventoryReservation> reservations = new ArrayList<>();
+        try {
+            for (OrderItemDTO orderItem : orderItems) {
+                Long storeId = orderItem.getStoreId();
+                Long productId = orderItem.getProductId();
+                int quantity = orderItem.getQuantity();
+
+                Stock stock = getStock(storeId, productId);
+                int availableQuantity = getAvailableInventory(stock);
+
+                if (availableQuantity < quantity) {
+                    String customerEmail = order.getCustomerEmail();
+                    OrderCanceledEventDTO orderCanceledEventDTO = new OrderCanceledEventDTO(orderId, "Not enough inventory for product " + productId, customerEmail);
+                    cancelReservation(orderCanceledEventDTO);
+                    throw new InsufficientInventoryException("Not enough inventory for product " + productId);
+                }
+
+                stock.setStockAvailableQuantity(stock.getStockAvailableQuantity() - quantity);
+                stockRepository.save(stock);
+
+                var inventoryReservation = new InventoryReservation();
+                inventoryReservation.setProductId(productId);
+                inventoryReservation.setOrderId(orderId);
+                inventoryReservation.setReservedQuantity(quantity);
+                inventoryReservation.setStatus(RESERVED);
+                inventoryReservationRepository.save(inventoryReservation);
+                reservations.add(inventoryReservation);
+            }
+
+            StoreCreatedEventDTO storeCreatedEventDTO = new StoreCreatedEventDTO(
+                    orderId, order.getUserId(),
+                    RESERVED.name(), order.getCustomerEmail(),
+                    order.getCustomerName(), order.getCustomerContact(),
+                    order.getAddressDetails(),
+                    order.getPaymentAmount(),
+                    order.getPaymentMethod()
+            );
+            storeUpdatedPublisher.publishStoreUpdatedEvent(storeCreatedEventDTO);
+
+        } catch (Exception e) {
+            log.error("Failed to reserve stock for orderId: {}. Error: {}", orderId, e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Transactional
+    @KafkaListener(topics = "payment-canceled-events", groupId = "store_payment_id")
+    public void cancelReservation(OrderCanceledEventDTO orderCanceledEventDTO) {
+        long orderId = orderCanceledEventDTO.getOrderId();
+        List<InventoryReservation> inventoryReservations = inventoryReservationRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("InventoryReservation not found with id", orderId));
+
+        for (InventoryReservation inventoryReservation : inventoryReservations) {
+            Long productId = inventoryReservation.getProductId();
+            int reserveQuantity = inventoryReservation.getReservedQuantity();
+            Stock stock = stockRepository.findByProductId(productId)
+                    .orElseThrow(() -> new EntityNotFoundException("Stock not found with product id", productId));
+            stock.setStockAvailableQuantity(stock.getStockAvailableQuantity() + reserveQuantity);
+            inventoryReservation.setStatus(CANCELED);
+        }
+
+        storeCancellationPublisher.publishOrderCanceledEvent(orderCanceledEventDTO);
+    }
+
+    private Stock getStock(long storeId, long productId){
+        return stockRepository.findByStoreIdAndProductId(storeId, productId).
+                orElseThrow(() -> new RuntimeException("Stock not found for product " + productId));
+    }
+
+    private int getAvailableInventory(Stock stock) {
+        return stock.getStockAvailableQuantity();
+    }
 
     @Override
     public StoreDTO createStore(StoreDTO storeDTO) {
