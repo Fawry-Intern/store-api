@@ -6,7 +6,7 @@ eureka:
       defaultZone: http://localhost:8765/eureka
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/order_db
+    url: jdbc:postgresql://localhost:5432/store_db
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
