@@ -11,15 +11,15 @@ import java.time.Instant;
 public record StockDTO(
         Long id,
         @NotNull(message = "Product ID is mandatory")
-        Long productId,
+        Long productId, // ---
         String productName,
         BigDecimal productPrice,
         String productDescription,
         String productImage,
         @NotNull(message = "Store ID is mandatory")
-        Long storeId,
+        Long storeId, // ---
         @NotNull(message = "Stock available quantity is mandatory")
         @Min(value = 0, message = "Stock available quantity must be at least 0")
-        Integer stockAvailableQuantity,
+        Integer stockAvailableQuantity, // ---
         Instant stockLastUpdated
 ) {}

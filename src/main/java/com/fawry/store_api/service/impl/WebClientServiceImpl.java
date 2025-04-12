@@ -36,12 +36,15 @@ public class WebClientServiceImpl implements WebClientService {
             return webClient.get()
                     .uri(uriBuilder -> uriBuilder
                             .path("/api/products")
-                            .queryParam("ids", ids)
                             .build())
                     .retrieve()
                     .bodyToFlux(ProductResponseDTO.class)
                     .collectList()
-                    .block();
+                    .block()
+                    .stream()
+                    .filter(productResponseDTO ->
+                            productIds.contains(productResponseDTO.id()))
+                    .toList();
         } catch (WebClientResponseException e) {
             throw new ResponseStatusException(
                     HttpStatus.valueOf(e.getStatusCode().value()),
