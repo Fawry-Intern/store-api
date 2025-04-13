@@ -11,6 +11,10 @@ import com.fawry.store_api.repository.StockRepository;
 import com.fawry.store_api.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -169,7 +173,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
 
-    public List<ProductResponseDTO> getStoreProducts(Long storeId) {
+    public List<ProductResponseDTO> getStoreProducts(Long storeId, int page, int size, String sortBy) {
 
         storeRepository.findById(storeId)
                 .orElseThrow(() -> {
@@ -178,8 +182,8 @@ public class StoreServiceImpl implements StoreService {
                 });
 
         try {
-
-            List<Stock> stocks = stockRepository.findByStoreId(storeId);
+            Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+           Page<Stock> stocks =stockRepository.findByStoreId(storeId, pageable);
 
             if (stocks.isEmpty()) {
                 log.info("No products found in store with ID: {}", storeId);

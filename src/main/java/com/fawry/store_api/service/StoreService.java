@@ -16,6 +16,6 @@ public interface StoreService {
 
     void deleteStore(Long id);
 
-    List<ProductResponseDTO> getStoreProducts(Long storeId);
+    List<ProductResponseDTO> getStoreProducts(Long storeId, int page, int size, String sortBy);
 
 }

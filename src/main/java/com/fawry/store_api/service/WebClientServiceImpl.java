@@ -17,7 +17,7 @@ public class WebClientServiceImpl implements WebClientService {
 
     private final WebClient webClient;
 
-    public WebClientServiceImpl(@Value("${product.api.base-url:http://localhost:7071}") String productApiBaseUrl) {
+    public WebClientServiceImpl(@Value("${product.api.base-url:http://localhost:6061}") String productApiBaseUrl) {
         this.webClient = WebClient.create(productApiBaseUrl);
     }
 
