@@ -1,0 +1,2 @@
+ALTER TABLE stores
+    ADD COLUMN image_url VARCHAR(255);

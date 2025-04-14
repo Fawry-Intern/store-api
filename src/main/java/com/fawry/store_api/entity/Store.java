@@ -25,4 +25,7 @@ public class Store {
     @Column(name = "store_address", nullable = false)
     @NotBlank(message = "Store address is mandatory")
     private String address;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 }

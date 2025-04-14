@@ -14,5 +14,6 @@ public record StoreDTO(
         @Size(min = 5, max = 255, message = "Store address must be between 5 and 255 characters")
         String address,
         Integer productCount,
-        Integer totalStockItems
+        Integer totalStockItems,
+        String imageUrl
 ) {}

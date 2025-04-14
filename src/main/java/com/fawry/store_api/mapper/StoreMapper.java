@@ -18,6 +18,7 @@ public class StoreMapper {
                 .address(store.getAddress())
                 .productCount(productCount)
                 .totalStockItems(totalStockItems)
+                .imageUrl(store.getImageUrl())
                 .build();
     }
 
@@ -27,6 +28,7 @@ public class StoreMapper {
                 .id(dto.id())
                 .name(dto.name())
                 .address(dto.address())
+                .imageUrl(dto.imageUrl())
                 .build();
     }
 

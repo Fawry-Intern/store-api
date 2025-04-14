@@ -47,4 +47,13 @@
         <sqlFile path="db/changelog/sql/reserve_inventory_last_updated_column_v.1.1.1.sql"/>
     </changeSet>
 
+    <changeSet id="add_image_url_column_to_stores" author="ahmed yahia">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="stores" columnName="image_url"/>
+            </not>
+        </preConditions>
+        <sqlFile path="db/changelog/sql/store_image_v_1.0.0.sql"/>
+    </changeSet>
+
 </databaseChangeLog>
