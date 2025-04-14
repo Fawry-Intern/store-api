@@ -23,6 +23,10 @@ import com.fawry.store_api.service.StoreService;
 import com.fawry.store_api.service.WebClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.stereotype.Service;
@@ -209,11 +213,12 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public List<ProductResponseDTO> getStoreProducts(Long storeId) {
+    public List<ProductResponseDTO> getStoreProducts(Long storeId, int page, int size) {
         storeRepository.findById(storeId)
                 .orElseThrow(() -> new EntityNotFoundException("Store", storeId));
 
-        List<Stock> stocks = stockRepository.findByStoreId(storeId);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Stock> stocks =stockRepository.findByStoreId(storeId, pageable);
         if (stocks.isEmpty()) {
             return List.of();
         }

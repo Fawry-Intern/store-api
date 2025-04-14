@@ -42,9 +42,11 @@ public class StoreController {
 
 
     @GetMapping("/{storeId}/products")
-    public ResponseEntity<List<ProductResponseDTO>> getStoreProducts(@PathVariable Long storeId) {
+    public ResponseEntity<List<ProductResponseDTO>> getStoreProducts(@PathVariable Long storeId,
+                                                                     @RequestParam(defaultValue = "0") int page,
+                                                                     @RequestParam(defaultValue = "10") int size) {
         try {
-            List<ProductResponseDTO> products = storeService.getStoreProducts(storeId);
+            List<ProductResponseDTO> products = storeService.getStoreProducts(storeId, page, size);
             return ResponseEntity.ok(products);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

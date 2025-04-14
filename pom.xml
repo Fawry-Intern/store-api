@@ -114,6 +114,7 @@
 						<path>
 							<groupId>org.springframework.boot</groupId>
 							<artifactId>spring-boot-configuration-processor</artifactId>
+							<!--suppress UnresolvedMavenProperty -->
 							<version>${spring-boot.version}</version>
 						</path>
 					</annotationProcessorPaths>
