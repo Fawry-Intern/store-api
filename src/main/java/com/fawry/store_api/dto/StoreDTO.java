@@ -1,6 +1,7 @@
 package com.fawry.store_api.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
@@ -15,5 +16,9 @@ public record StoreDTO(
         String address,
         Integer productCount,
         Integer totalStockItems,
+        @Pattern(
+                regexp = "^(https?|ftp)://[\\w.-]+(?:\\.[\\w\\.-]+)+[/#?]?.*$",
+                message = "Invalid image URL format"
+        )
         String imageUrl
 ) {}

@@ -25,7 +25,6 @@ public class StoreMapper {
     public Store toEntity(StoreDTO dto) {
         if (dto == null) return null;
         return Store.builder()
-                .id(dto.id())
                 .name(dto.name())
                 .address(dto.address())
                 .imageUrl(dto.imageUrl())

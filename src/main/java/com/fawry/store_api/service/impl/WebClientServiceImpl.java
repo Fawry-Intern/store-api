@@ -28,9 +28,7 @@ public class WebClientServiceImpl implements WebClientService {
             return List.of();
         }
 
-        String ids = productIds.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
+
 
         try {
             return webClient.get()
