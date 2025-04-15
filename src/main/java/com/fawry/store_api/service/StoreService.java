@@ -4,6 +4,7 @@ import com.fawry.kafka.events.OrderCanceledEventDTO;
 import com.fawry.kafka.events.OrderCreatedEventDTO;
 import com.fawry.store_api.dto.ProductResponseDTO;
 import com.fawry.store_api.dto.StoreDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -22,6 +23,6 @@ public interface StoreService {
 
     void deleteStore(Long id);
 
-    List<ProductResponseDTO> getStoreProducts(Long storeId, int page, int size);
+    Page<ProductResponseDTO> getStoreProducts(Long storeId, int page, int size);
 
 }

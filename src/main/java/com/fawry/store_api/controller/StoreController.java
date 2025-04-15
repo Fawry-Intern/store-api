@@ -6,6 +6,7 @@ import com.fawry.store_api.exception.EntityNotFoundException;
 import com.fawry.store_api.service.StoreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,11 +43,11 @@ public class StoreController {
 
 
     @GetMapping("/{storeId}/products")
-    public ResponseEntity<List<ProductResponseDTO>> getStoreProducts(@PathVariable Long storeId,
+    public ResponseEntity<Page<ProductResponseDTO>> getStoreProducts(@PathVariable Long storeId,
                                                                      @RequestParam(defaultValue = "0") int page,
                                                                      @RequestParam(defaultValue = "10") int size) {
         try {
-            List<ProductResponseDTO> products = storeService.getStoreProducts(storeId, page, size);
+            Page<ProductResponseDTO> products = storeService.getStoreProducts(storeId, page, size);
             return ResponseEntity.ok(products);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
