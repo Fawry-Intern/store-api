@@ -41,3 +41,8 @@ spring:
       properties:
         spring.json.add.type.headers: true
         spring.json.type.mapping:
+
+
+custom:
+  merchant:
+    email: mustafatarek112@gmail.com

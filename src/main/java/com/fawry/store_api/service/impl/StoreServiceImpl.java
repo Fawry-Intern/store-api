@@ -21,8 +21,11 @@ import com.fawry.store_api.repository.StockRepository;
 import com.fawry.store_api.repository.StoreRepository;
 import com.fawry.store_api.service.StoreService;
 import com.fawry.store_api.service.WebClientService;
-import lombok.RequiredArgsConstructor;
+
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.TopicPartition;
@@ -39,7 +42,6 @@ import static com.fawry.store_api.enums.ReservationStatus.RESERVED;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 @Slf4j
 public class StoreServiceImpl implements StoreService {
     private final StoreRepository storeRepository;
@@ -49,6 +51,25 @@ public class StoreServiceImpl implements StoreService {
     private final InventoryReservationRepository inventoryReservationRepository;
     private final StoreCancellationPublisher storeCancellationPublisher;
     private final StoreUpdatedPublisher storeUpdatedPublisher;
+
+    @Value("${custom.merchant.email}")
+    private String merchantEmail;
+    @Autowired
+    public StoreServiceImpl(StoreRepository storeRepository,
+                            StoreMapper storeMapper,
+                            StockRepository stockRepository,
+                            WebClientService webClientService,
+                            InventoryReservationRepository inventoryReservationRepository,
+                            StoreCancellationPublisher storeCancellationPublisher,
+                            StoreUpdatedPublisher storeUpdatedPublisher) {
+        this.storeRepository = storeRepository;
+        this.storeMapper = storeMapper;
+        this.stockRepository = stockRepository;
+        this.webClientService = webClientService;
+        this.inventoryReservationRepository = inventoryReservationRepository;
+        this.storeCancellationPublisher = storeCancellationPublisher;
+        this.storeUpdatedPublisher = storeUpdatedPublisher;
+    }
 
     @Override
     @Transactional
@@ -95,7 +116,8 @@ public class StoreServiceImpl implements StoreService {
                     order.getCustomerName(), order.getCustomerContact(),
                     order.getAddressDetails(),
                     order.getPaymentAmount(),
-                    order.getPaymentMethod()
+                    order.getPaymentMethod(),
+                    merchantEmail
             );
             storeUpdatedPublisher.publishStoreUpdatedEvent(storeCreatedEventDTO);
 

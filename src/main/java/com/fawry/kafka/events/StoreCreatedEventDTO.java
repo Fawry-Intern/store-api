@@ -20,6 +20,7 @@ public class StoreCreatedEventDTO implements Serializable {
     private final AddressDetails addressDetails;
     private final BigDecimal paymentAmount;
     private final PaymentMethod paymentMethod;
+    private final String merchantEmail;
 
     public static StoreCreatedEventDTO newInstance(Long orderId,
                                                    Long userId,
@@ -29,8 +30,9 @@ public class StoreCreatedEventDTO implements Serializable {
                                                    String customerContact,
                                                    AddressDetails addressDetails,
                                                    BigDecimal paymentAmount,
-                                                   PaymentMethod paymentMethod
+                                                   PaymentMethod paymentMethod,
+                                                   String merchantEmail
     ) {
-        return new StoreCreatedEventDTO(orderId, userId, status, customerEmail, customerName, customerContact, addressDetails, paymentAmount, paymentMethod);
+        return new StoreCreatedEventDTO(orderId, userId, status, customerEmail, customerName, customerContact, addressDetails, paymentAmount, paymentMethod,merchantEmail);
     }
 }
